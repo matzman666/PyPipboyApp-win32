@@ -81,6 +81,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	CString CSparams = "pypipboyapp.py";
+	if (usePythonW)
+	{
+		CSparams = CSparams + " --stdlog ../pypipboyapp.log";
+	}
 	CString CScommand = CSExe + " " + CSparams;
 
 	STARTUPINFO si;
