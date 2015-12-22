@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <atlstr.h>
 #include <shellapi.h>
+#include <Shobjidl.h>
 
 #define MAX_LOADSTRING 100
 
@@ -83,7 +84,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	CString CSparams = "pypipboyapp.py";
 	if (usePythonW)
 	{
-		CSparams = CSparams + " --stdlog ../pypipboyapp.log";
+		CSparams = CSparams + " --startedfromwin32launcher --stdlog ../pypipboyapp.log";
 	}
 	CString CScommand = CSExe + " " + CSparams;
 
@@ -93,6 +94,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
+
+	//set the application model id
+	SetCurrentProcessExplicitAppUserModelID(L"matzman666.pypipboyapp.win32");
 
 	// Start the child process. 
 	if (!CreateProcess(NULL,   // No module name (use command line)
