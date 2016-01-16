@@ -36,6 +36,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	// Parse command line arguments
 	LPTSTR *szArgList;
 	int argCount;
+	CString iniFileArg = "";
+	BOOL iniFileArgGiven = false;
+#if PORTABLE_MODE_DEFAULT == 1
+	BOOL portableMode = true;
+#else
+	BOOL portableMode = false;
+#endif
 
 	szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
 
@@ -43,6 +50,17 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		for (int i = 0; i < argCount; i++) {
 			if (!_tcscmp(L"--debug", szArgList[i])) {
 				usePythonW = false;
+			} else if (!_tcscmp(L"--inifile", szArgList[i])) {
+				if (i >= argCount - 1) {
+					MessageBox(NULL, L"Parameter --inifile is missing an argument", L"Error", MB_OK);
+				} else {
+					// Attention when a relative path is given: The working directory 
+					// is the PyPipboyApp directory and not the launcher directory. 
+					iniFileArg = szArgList[++i];
+					iniFileArgGiven = true;
+				}
+			} else if (!_tcscmp(L"--portable", szArgList[i])) {
+				portableMode = true;
 			}
 		}
 
@@ -85,6 +103,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	if (usePythonW)
 	{
 		CSparams = CSparams + " --startedfromwin32launcher --stdlog ../pypipboyapp.log";
+	}
+	if (iniFileArgGiven)
+	{
+		CSparams = CSparams + " --inifile " + iniFileArg;
+	}
+	else if (portableMode) {
+		CSparams = CSparams + " --inifile ../PyPipboyApp.ini";
 	}
 	CString CScommand = CSExe + " " + CSparams;
 
